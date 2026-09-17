@@ -1,0 +1,15 @@
+id = "zed-i18n"
+name = "i18n Ally for Zed"
+version = "0.1.0"
+schema_version = 1
+authors = ["BANSAFAn"]
+description = "Universal i18n management for Zed Editor: translation status dashboard, multi-folder monorepo support, live watch mode, and missing key diagnostics (Alpha)"
+repository = "https://github.com/BANSAFAn/i18n-zed"
+
+[slash_commands.i18n-status]
+description = "Show i18n translation coverage dashboard"
+requires_argument = false
+
+[language_servers.i18n-lsp]
+name = "i18n-lsp"
+languages = ["JavaScript", "TypeScript", "TSX", "Vue", "PHP", "HTML", "JSON"]
