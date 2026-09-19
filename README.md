@@ -19,15 +19,20 @@ Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on macOS), type `task: spawn`, and choose
 
 ![Zed Task Selector](public/2-preview.png)
 
-- **`i18n: Translation Status (All Languages)`**: Instantly scans your project and prints a full translation coverage report.
-- **`i18n: LIVE Watch Mode (Auto-update on save) 👀`**: Keeps a live watcher active in your terminal. As you add or edit translations, it dynamically shows what changed in real time!
+- **`i18n: Inspect Missing Keys 🔍`**: Interactive arrow-key menu (`↑`/`↓` + `Enter`) to inspect coverage, switch locales folders, auto-translate with Google Translate, and export templates.
+- **`i18n: LIVE Watch Mode (Auto-update on save) 👀`**: Interactive live watcher with folder switching (`s` or `Enter`) and instant diff updates on file save.
 
-#### 2. Instant Translation Status Report
-The dashboard automatically discovers translation folders (monorepos supported!), parses all `.json` and `.yaml` files, calculates completion percentages, and displays ASCII progress bars:
+#### 2. Interactive Translation Dashboard (Zero-Typing Navigation)
+Navigate languages effortlessly with arrow keys (`↑` / `↓`) and `Enter`! View visual progress bars for each locale, switch between folders in monorepos, toggle between missing-only and completed languages, auto-translate missing keys with free Google Translate, or export ready-to-use translation templates:
 
-![Translation Status Output](public/1-preview.png)
+![Interactive Translation Dashboard](public/4-preview.gif)
 
-#### 3. Real-Time Feedback as You Code
+#### 3. Interactive Multi-Folder Selection in Live Watch Mode
+Working in a monorepo or project with multiple locales directories? When starting Live Watch Mode, you can interactively choose which folder to monitor, or watch all folders simultaneously, with instant on-the-fly folder switching (`s` or `Enter`):
+
+![Watch Mode Folder Selection](public/5-preview.gif)
+
+#### 4. Real-Time Feedback as You Code
 Whenever you add or translate a key in any locale file, Live Watch Mode immediately detects the change and logs:
 ```text
 🔄 [11:15:22] locales/uk.yaml updated:
@@ -44,6 +49,8 @@ Whenever you add or translate a key in any locale file, Live Watch Mode immediat
 - 📊 **Visual Coverage Dashboard**: Clean, ASCII progress bars, translation completion percentages, and missing key counts for every module.
 - 🌍 **All World Languages + Special Locales**: Built-in flag support for 60+ languages and regional dialects (`zh-CN`, `pt-BR`, `es-419`, `ar-EG`, `en-US`), as well as gaming locales like `lolcat` (`🐱`).
 - ⚡ **Live Watch Mode**: Automatically recalculates coverage whenever you save a translation file, showing exact diffs (`+1 key translated`).
+- 🤖 **Auto-Translate with Free Google Translate**: Automatically translate untranslated keys in batch with zero API keys required, with preview or direct save into `.json` and `.yaml` files.
+- 🕹️ **Zero-Typing Arrow-Key Navigation**: Interactively browse languages and actions with keyboard arrow keys (`↑` / `↓` and `Enter`).
 - 🔍 **LSP Diagnostics & Hover**: Highlights missing translation keys directly inside source code (`t()`, `$t()`, `__()`, `trans()`) and shows translations across all languages on hover.
 - 🛠️ **Seamless Zed Tasks Integration**: Run dashboards directly from the Zed Command Palette (`Ctrl+Shift+P` → `task: spawn`).
 
@@ -95,22 +102,22 @@ To access i18n commands from any project via `task: spawn`, add the following to
 ```json
 [
   {
-    "label": "i18n: Translation Status (All Languages)",
+    "label": "i18n: Inspect Missing Keys 🔍",
     "command": "node",
-    "args": ["<PATH_TO_I18N_ZED>/lsp/cli.js"],
-    "use_new_terminal": false,
+    "args": ["<PATH_TO_I18N_ZED>/lsp/cli.js", "--interactive"],
+    "use_new_terminal": true,
     "allow_concurrent_runs": false
   },
   {
     "label": "i18n: LIVE Watch Mode (Auto-update on save) 👀",
     "command": "node",
     "args": ["<PATH_TO_I18N_ZED>/lsp/cli.js", "--watch"],
-    "use_new_terminal": false,
+    "use_new_terminal": true,
     "allow_concurrent_runs": false
   }
 ]
 ```
-*(Replace `<PATH_TO_I18N_ZED>` with your local repository path, e.g. `E:/github/i18n-zed`).*
+*(Replace `<PATH_TO_I18N_ZED>` with your local repository path, e.g. `E:/github/zed-i18n`).*
 
 ### Language Server Settings (`settings.json`)
 You can configure language server behaviors and custom translation function names in your Zed settings (`Ctrl+Shift+P` → `zed: open settings`):
@@ -144,9 +151,11 @@ You can configure language server behaviors and custom translation function name
 ## 📖 Usage
 
 ### Option 1: Zed Tasks (Recommended)
-1. Press `Ctrl+Shift+P` → `task: spawn`.
-2. Select **`i18n: Translation Status (All Languages)`**.
-3. View the report in the bottom terminal panel!
+1. Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on macOS) → type `task: spawn`.
+2. Choose your action:
+   - **`i18n: Inspect Missing Keys 🔍`**: Interactive arrow-key menu (`↑`/`↓` + `Enter`) to inspect coverage, switch locales folders, auto-translate with Google Translate, and export templates.
+   - **`i18n: LIVE Watch Mode (Auto-update on save) 👀`**: Interactive live watcher with folder switching (`s` or `Enter`) and instant diff updates on file save.
+3. View the report or interactive picker directly in Zed's terminal!
 
 ### Option 2: Live Watch Mode
 Keep your translations up-to-date while you code:
@@ -155,16 +164,31 @@ Keep your translations up-to-date while you code:
 3. Whenever you add or edit a key in any translation file, you will immediately see live updates and progress bar recalculations.
 
 ### Option 3: Terminal CLI
-You can also run the CLI tool directly from your project's terminal:
+You can also run the CLI tool directly from your terminal:
 ```bash
-# Analyze all languages across all modules
+# Translation status overview
 node <PATH_TO_I18N_ZED>/lsp/cli.js
 
-# Check a specific language with all missing keys listed
-node <PATH_TO_I18N_ZED>/lsp/cli.js uk
-node <PATH_TO_I18N_ZED>/lsp/cli.js lolcat
+# Interactive arrow-key navigation (no typing needed!)
+node <PATH_TO_I18N_ZED>/lsp/cli.js -i
 
-# Run in watch mode
+# Inspect untranslated keys for a specific language
+node <PATH_TO_I18N_ZED>/lsp/cli.js uk
+node <PATH_TO_I18N_ZED>/lsp/cli.js pl
+
+# Auto-translate missing keys with free Google Translate (preview)
+node <PATH_TO_I18N_ZED>/lsp/cli.js uk --translate
+
+# Auto-translate and save directly into locale file(s)
+node <PATH_TO_I18N_ZED>/lsp/cli.js uk --translate --save
+
+# Show all untranslated keys without truncation
+node <PATH_TO_I18N_ZED>/lsp/cli.js uk --all
+
+# Export missing keys as a ready-to-translate JSON template
+node <PATH_TO_I18N_ZED>/lsp/cli.js uk --template
+
+# Run in live watch mode
 node <PATH_TO_I18N_ZED>/lsp/cli.js --watch
 ```
 
@@ -177,6 +201,8 @@ node <PATH_TO_I18N_ZED>/lsp/cli.js --watch
 - [x] YAML (`.yaml`, `.yml`) parsing & coverage calculation
 - [x] Full world languages & dialects support + `lolcat` (`🐱`)
 - [x] Live Watch Mode with instant diff detection
+- [x] Free Google Translate auto-translation of missing keys
+- [x] Zero-typing interactive arrow-key selector (`↑`/`↓` + `Enter`)
 - [x] Missing key diagnostics in source files via LSP
 - [ ] Gettext PO (`.po`) file format support
 - [ ] TOML (`.toml`) file format support

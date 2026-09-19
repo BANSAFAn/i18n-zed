@@ -14,7 +14,7 @@ const {
   DiagnosticSeverity,
   TextDocumentSyncKind,
 } = require("vscode-languageserver/node");
-
+// Я ХУЯРЮ ВАМ БЛЯДЬ КОМЕНТИ НА АНГЛ - БО НА УКР НІХУЯ НЕ ЗРОЗУМІЄТЕ
 const {
   TextDocument,
 } = require("vscode-languageserver-textdocument");
@@ -112,7 +112,7 @@ connection.onInitialized(() => {
 /**
  * Load all locale JSON files from the configured directory.
  */
-const LOCALE_REGEX = /^[a-z]{2,3}([-_][a-zA-Z]{2,4})?\.(json|ya?ml)$/i;
+const LOCALE_REGEX = /^([a-z]{2,3}([-_][a-zA-Z0-9]{2,4})?|lolcat)\.(json|ya?ml)$/i;
 const IGNORE_DIRS = new Set([
   "node_modules", ".git", "dist", "build", "target", ".cache",
   ".next", ".nuxt", ".output", "vendor", "out", ".turbo", ".vscode", ".idea"
