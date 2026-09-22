@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "**.md"
+      - "public/**"
+      - ".gitignore"
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: lsp/package-lock.json
+
+      - name: Setup Rust with wasm32-wasip2
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-wasip2
+
+      - name: Install Node Dependencies
+        run: |
+          cd lsp
+          npm ci
+
+      - name: Typecheck TypeScript
+        run: |
+          cd lsp
+          npm run typecheck
+
+      - name: Build TypeScript LSP & CLI
+        run: |
+          cd lsp
+          npm run build
+
+      - name: Build Rust WASM
+        run: |
+          cargo build --target wasm32-wasip2 --release
+          cp target/wasm32-wasip2/release/zed_i18n.wasm extension.wasm
+
+      - name: Run CLI Smoke Tests
+        run: |
+          node lsp/dist/cli.js --dir test-project/locales
+          node lsp/dist/cli.js --dir test-project/test-formats/toml
+          node lsp/dist/cli.js --dir test-project/test-formats/properties
+          node lsp/dist/cli.js --dir test-project/test-formats/gettext

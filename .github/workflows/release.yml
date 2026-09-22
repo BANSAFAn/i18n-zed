@@ -1,0 +1,63 @@
+name: Release & Build
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+      # ─────────────────────────────────────────────────────────────
+      # ОСЬ НАХ"Я ТИ ТУТ БЛЯДЬ ДИВИШСЯ, ХОЧ Я ТУТ ПЕНІС ЗРОБЛЮ ?
+      # ─────────────────────────────────────────────────────────────
+      - name: Checkout code
+        if: ${{ steps.release.outputs.release_created }}
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        if: ${{ steps.release.outputs.release_created }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: lsp/package-lock.json
+
+      - name: Setup Rust with wasm32-wasip2
+        if: ${{ steps.release.outputs.release_created }}
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-wasip2
+
+      - name: Build TypeScript LSP & CLI
+        if: ${{ steps.release.outputs.release_created }}
+        run: |
+          cd lsp
+          npm ci
+          npm run build
+          cd ..
+
+      - name: Build Rust WASM Extension
+        if: ${{ steps.release.outputs.release_created }}
+        run: |
+          cargo build --target wasm32-wasip2 --release
+          cp target/wasm32-wasip2/release/zed_i18n.wasm extension.wasm
+
+      - name: Upload Assets to GitHub Release
+        if: ${{ steps.release.outputs.release_created }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload ${{ steps.release.outputs.tag_name }} extension.wasm extension.toml --clobber
