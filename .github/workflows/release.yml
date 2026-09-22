@@ -21,7 +21,7 @@ jobs:
           manifest-file: .release-please-manifest.json
 
       # ─────────────────────────────────────────────────────────────
-      # ОСЬ НАХ"Я ТИ ТУТ БЛЯДЬ ДИВИШСЯ, ХОЧ Я ТУТ ПЕНІС ЗРОБЛЮ ?
+      # ПО ПИВКУ П"ДАФІЛ ?
       # ─────────────────────────────────────────────────────────────
       - name: Checkout code
         if: ${{ steps.release.outputs.release_created }}
@@ -31,9 +31,7 @@ jobs:
         if: ${{ steps.release.outputs.release_created }}
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: npm
-          cache-dependency-path: lsp/package-lock.json
+          node-version: 22
 
       - name: Setup Rust with wasm32-wasip2
         if: ${{ steps.release.outputs.release_created }}
@@ -45,7 +43,7 @@ jobs:
         if: ${{ steps.release.outputs.release_created }}
         run: |
           cd lsp
-          npm ci
+          npm install
           npm run build
           cd ..
 
