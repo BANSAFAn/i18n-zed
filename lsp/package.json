@@ -1,6 +1,6 @@
 {
   "name": "i18n-zed-lsp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "LSP server and CLI engine for i18n-zed extension",
   "main": "dist/server.js",
   "bin": {

@@ -1,6 +1,6 @@
 [package]
 name = "zed-i18n"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 authors = ["BANSAFAn"]
 description = "Universal i18n management extension for Zed editor (Alpha)"
