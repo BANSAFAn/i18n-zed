@@ -44,12 +44,12 @@ Whenever you add or translate a key in any locale file, Live Watch Mode immediat
 
 ## ✨ Key Features
 
-- 🌐 **Universal File Formats**: Full support for both **JSON** (`.json`) and **YAML** (`.yaml`, `.yml`).
+- 🌐 **Universal File Formats**: Full support for **JSON** (`.json`, `.jsonc`, `.json5`), **YAML** (`.yaml`, `.yml`), **TOML** (`.toml`), **Java / Android Properties** (`.properties`), **GNU Gettext PO** (`.po`), and **Flutter ARB** (`.arb`).
 - 📦 **Monorepo & Multi-Folder Detection**: Recursively discovers all locale folders across complex monorepos without manual path configuration (e.g. `src/locales`, `locales`, `public/locales`, `resources/lang`, `apps/*/locales`).
 - 📊 **Visual Coverage Dashboard**: Clean, ASCII progress bars, translation completion percentages, and missing key counts for every module.
 - 🌍 **All World Languages + Special Locales**: Built-in flag support for 60+ languages and regional dialects (`zh-CN`, `pt-BR`, `es-419`, `ar-EG`, `en-US`), as well as gaming locales like `lolcat` (`🐱`).
 - ⚡ **Live Watch Mode**: Automatically recalculates coverage whenever you save a translation file, showing exact diffs (`+1 key translated`).
-- 🤖 **Auto-Translate with Free Google Translate**: Automatically translate untranslated keys in batch with zero API keys required, with preview or direct save into `.json` and `.yaml` files.
+- 🤖 **Auto-Translate with Free Google Translate**: Automatically translate untranslated keys in batch with zero API keys required, with preview or direct save into all supported formats (`.json`, `.yaml`, `.toml`, `.properties`, `.po`).
 - 🕹️ **Zero-Typing Arrow-Key Navigation**: Interactively browse languages and actions with keyboard arrow keys (`↑` / `↓` and `Enter`).
 - 🔍 **LSP Diagnostics & Hover**: Highlights missing translation keys directly inside source code (`t()`, `$t()`, `__()`, `trans()`) and shows translations across all languages on hover.
 - 🛠️ **Seamless Zed Tasks Integration**: Run dashboards directly from the Zed Command Palette (`Ctrl+Shift+P` → `task: spawn`).
@@ -74,12 +74,16 @@ cd i18n-zed
 
 ### 2. Install Dependencies & Build Extension
 ```bash
-# Install Node dependencies
-cd lsp && npm install && cd ..
+# Install Node dependencies & compile TypeScript via tsup
+cd lsp
+npm install
+npm run build     # Compiles TypeScript into high-performance standalone bundles in lsp/dist/
+cd ..
 
-# Compile the WASM extension
+# Compile the WASM extension (embeds lsp/dist/server.js)
 cargo build --target wasm32-wasip2 --release
 cp target/wasm32-wasip2/release/zed_i18n.wasm extension.wasm
+# (On Windows PowerShell: Copy-Item target\wasm32-wasip2\release\zed_i18n.wasm -Destination extension.wasm -Force)
 ```
 
 ### 3. Install as Dev Extension in Zed
@@ -194,17 +198,62 @@ node <PATH_TO_I18N_ZED>/lsp/cli.js --watch
 
 ---
 
+## 💻 TypeScript Development & Building
+
+The LSP server and CLI engine are written in **TypeScript** under `lsp/src/` and bundled with **tsup**:
+
+```bash
+cd lsp
+
+# Build production bundles to lsp/dist/ (server.js & cli.js)
+npm run build
+
+# Run TypeScript type checker without emitting code
+npm run typecheck
+
+# Watch mode during development (auto-rebuilds on save)
+npm run watch
+```
+
+### 🧪 How to Test & Verify
+
+To quickly test the CLI and translation engine on the included `test-project`:
+
+1. **Verify Translation Status Overview**:
+   ```bash
+   node lsp/cli.js --dir test-project/locales
+   ```
+2. **Test Interactive Arrow-Key Menu**:
+   ```bash
+   node lsp/cli.js --dir test-project/locales -i
+   ```
+   *(Navigate with `↑` / `↓` and press `Enter` to inspect missing keys or preview translations).*
+3. **Test Auto-Translate Preview**:
+   ```bash
+   node lsp/cli.js --dir test-project/locales uk -t
+   ```
+4. **Test Live Watch Mode**:
+   ```bash
+   node lsp/cli.js --dir test-project/locales -w
+   ```
+   *(Open `test-project/locales/uk.json` in any editor, add a key, and save — the terminal will immediately show the live diff!)*
+
+---
+
 ## 🗺️ Roadmap
 
-- [x] Multi-framework JSON support
+- [x] Multi-framework JSON & JSONC (`.json`, `.jsonc`, `.json5`) support
 - [x] Multi-module & monorepo automatic directory discovery
 - [x] YAML (`.yaml`, `.yml`) parsing & coverage calculation
+- [x] TOML (`.toml`) file format support
+- [x] Java / Android Properties (`.properties`) file format support
+- [x] GNU Gettext PO (`.po`) file format support
+- [x] Flutter ARB (`.arb`) file format support
 - [x] Full world languages & dialects support + `lolcat` (`🐱`)
 - [x] Live Watch Mode with instant diff detection
 - [x] Free Google Translate auto-translation of missing keys
 - [x] Zero-typing interactive arrow-key selector (`↑`/`↓` + `Enter`)
 - [x] Missing key diagnostics in source files via LSP
-- [ ] Gettext PO (`.po`) file format support
-- [ ] TOML (`.toml`) file format support
+- [x] Fully typed TypeScript codebase with lightning-fast `tsup` bundling
 - [ ] In-editor inline ghost text showing translated preview next to keys
 - [ ] Quick-fix Code Actions to add missing keys directly from editor
