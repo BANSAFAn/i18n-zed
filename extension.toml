@@ -1,6 +1,6 @@
 id = "zed-i18n"
 name = "i18n Ally for Zed"
-version = "0.1.0"
+version = "0.1.1"
 schema_version = 1
 authors = ["BANSAFAn"]
 description = "Universal i18n management for Zed Editor: translation status dashboard, multi-folder monorepo support, live watch mode, and missing key diagnostics (Alpha)"
