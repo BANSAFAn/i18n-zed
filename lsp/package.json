@@ -2,9 +2,14 @@
   "name": "i18n-zed-lsp",
   "version": "0.1.0",
   "description": "LSP server and CLI engine for i18n-zed extension",
-  "main": "server.js",
+  "main": "dist/server.js",
   "bin": {
-    "i18n-status": "./cli.js"
+    "i18n-status": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsup",
+    "watch": "tsup --watch",
+    "typecheck": "tsc --noEmit"
   },
   "repository": {
     "type": "git",
@@ -14,7 +19,14 @@
   "private": true,
   "dependencies": {
     "js-yaml": "^4.1.1",
+    "smol-toml": "^1.9.0",
     "vscode-languageserver": "^9.0.1",
     "vscode-languageserver-textdocument": "^1.0.12"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^26.6.2",
+    "tsup": "^8.5.1",
+    "typescript": "^7.0.2"
   }
 }

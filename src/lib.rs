@@ -11,7 +11,7 @@
 use zed_extension_api::{self as zed, serde_json};
 
 /// Bundled LSP server script so the extension works in ANY project
-const SERVER_SCRIPT: &str = include_str!("../lsp/server.js");
+const SERVER_SCRIPT: &str = include_str!("../lsp/dist/server.js");
 
 /// Main extension struct
 struct I18nExtension;
